@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+	http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+
+	<bean id="augmentedCordobaService" class="com.augmentedcba.service.impl.AugmentedCordobaServiceImpl">
+		<constructor-arg index="0" ref="poiDao" />
+	</bean>
+	
+	<bean id="acWS" class="com.augmentedcba.ws.AugmentedCordobaImpl">
+		<constructor-arg index="0" ref="augmentedCordobaService" />
+		<constructor-arg index="1" value="${min.latitude}" />
+		<constructor-arg index="2" value="${max.latitude}" />
+		<constructor-arg index="3" value="${min.longitude}" />
+		<constructor-arg index="4" value="${max.longitude}" />
+		<constructor-arg index="5" value="${min.radius}" />
+		<constructor-arg index="6" value="${max.radius}" />
+	</bean>
+	
+	
+	<jaxrs:server id="ac-server" address="/">
+		<jaxrs:serviceBeans>
+			<ref bean="acWS" />
+		</jaxrs:serviceBeans>
+		<jaxrs:extensionMappings>
+			<entry key="json" value="application/json" />
+		</jaxrs:extensionMappings>
+		<jaxrs:properties>
+			<entry key="org.apache.cxf.Logger" value="org.apache.cxf.common.logging.Log4jLogger" />
+		</jaxrs:properties>
+		<jaxrs:providers>
+      		<ref bean="jsonProvider" />
+    	</jaxrs:providers>
+	</jaxrs:server>
+	
+	<bean id="jsonProvider" class="org.apache.cxf.jaxrs.provider.JSONProvider">
+		<property name="dropRootElement" value="true"/>
+		<property name="serializeAsArray" value="true"/>
+        <property name="arrayKeys">
+        	<list>
+        		<value>hotspots</value>
+				<value>actions</value>
+			</list>
+		</property>
+	</bean>
+	
+
+</beans>
+	
+	

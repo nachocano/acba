@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+	   http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+
+
+	<bean id="augmentedcbaSqlStatements"
+		class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="locations">
+			<value>classpath:augmentedcba-sql-statements.xml</value>
+		</property>
+	</bean>
+
+	<bean id="augmentedcbaDS" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName" value="java:comp/env/jdbc/augmentedcba" />
+	</bean>
+
+	<bean id="poiDao" class="com.augmentedcba.dao.impl.JdbcPoiDao"
+		init-method="init" destroy-method="shutdown">
+		<constructor-arg index="0" ref="augmentedcbaDS" />
+		<constructor-arg index="1" ref="augmentedcbaSqlStatements" />
+		<constructor-arg index="2" ref="cacheManager"/>
+		<constructor-arg index="3" value="${ehcache.ttlInSeconds}"/>
+		<constructor-arg index="4" value="${ehcache.key.sequence}"/>
+	</bean>
+
+
+</beans>

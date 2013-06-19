@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	
+  <entry key="poi.selectHotspots">
+    SELECT 
+		   poi_id, p.attribution, p.title, p.latitude, p.longitude, p.image_url, p.line2, p.line3, p.line4, p.type,
+           pa.poi_action_id, pa.label, pa.uri, pa.content_type, pa.method, pa.activity_type
+      FROM
+	 	poi AS p LEFT OUTER JOIN poi_action AS pa 
+	  USING (poi_id)
+  </entry>
+  
+ </properties>
+
+
+
+
+
+ 
